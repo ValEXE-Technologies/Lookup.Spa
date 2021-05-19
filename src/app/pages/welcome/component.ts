@@ -42,23 +42,19 @@ export class WelcomPage implements OnInit {
         this.f.selectedCurrencyCode.setValue(newCurrencyCode);
     }
 
-    public onSubmit(): void {
+    public async onSubmit() {
         if (this.domainLookupForm.invalid) {
             return;
         }
 
         this.isBusy = true;
 
-        this.appServices.getIsDomainAvailable(this.f.domainNameWithTLD.value)
-            .pipe(first())
-            .subscribe(res => {
-                alert(`The response is - ${res.status}; ${res.message}; ${res.data}`)
-            })
-
         // TODO:
-        // - Domain is available or not
-        // - Pull & get domain price for each registrars
-
-        this.isBusy = false;
+        try {
+            let response = await this.appServices.getIsDomainAvailable(this.f.domainNameWithTLD.value);
+            // - Pull & get domain price for each registrars
+        } finally {
+            this.isBusy = false;
+        }
     }
 }

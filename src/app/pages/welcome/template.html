@@ -20,7 +20,7 @@
 
                     <button type="submit" [disabled]="domainLookupForm.invalid" class="btn btn-primary">
                         <span *ngIf="isBusy" class="spinner-border spinner-border-sm mr-1"></span>
-                        <i class="bi bi-search"></i>
+                        <i *ngIf="!isBusy" class="bi bi-search"></i>
                     </button>
                 </div>
 

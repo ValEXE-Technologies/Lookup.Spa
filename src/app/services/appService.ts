@@ -1,7 +1,6 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { environment } from '@environments/environment';
-import { Observable } from "rxjs";
 
 import {
     ResponseViewModel,
@@ -25,9 +24,9 @@ export class AppService {
         return this.supportedCurrencies;
     }
 
-    public getIsDomainAvailable(
+    public async getIsDomainAvailable(
         domainNameWithTLD: string
-    ): Observable<ResponseViewModel<boolean>> {
-        return this.httpClient.get<ResponseViewModel<boolean>>(`${environment.apiUrl}/api/domain/isavailable/${domainNameWithTLD}`);
+    ): Promise<ResponseViewModel<boolean>> {
+        return this.httpClient.get<ResponseViewModel<boolean>>(`${environment.apiUrl}/api/domain/isavailable/${domainNameWithTLD}`).toPromise();
     }
 }
