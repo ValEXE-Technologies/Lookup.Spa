@@ -9,3 +9,8 @@ export type CurrencyResponse = {
     symbol: string;
     name: string;
 }
+
+export type Registrar = {
+    name: string;
+    baseUrl: string;
+}

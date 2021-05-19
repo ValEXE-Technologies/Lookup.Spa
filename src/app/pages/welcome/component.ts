@@ -3,8 +3,9 @@ import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { first } from 'rxjs/operators';
 
 import {
-    CurrencyResponse,
     AppService,
+    CurrencyResponse,
+    Registrar
 } from "@app/services";
 
 @Component({
@@ -13,6 +14,8 @@ import {
 export class WelcomPage implements OnInit {
     public domainLookupForm: FormGroup;
     public supportedCurrencies: CurrencyResponse[] = null;
+    public supportedRegistrars: Registrar[] = null;
+    public domainStatus: '' | 'Available' | 'NotAvailable' = '';
     public isBusy: boolean = false;
 
     constructor(
@@ -21,8 +24,9 @@ export class WelcomPage implements OnInit {
     ) {
     }
 
-    ngOnInit() {
-        this.supportedCurrencies = this.appServices.getCurrencies();
+    async ngOnInit() {
+        await this.loadCurrencies();
+        await this.loadSupportedRegistrars();
 
         this.domainLookupForm = this.formBuilder.group({
             selectedCurrencyCode: [this.supportedCurrencies[0].code, [Validators.required]],
@@ -30,6 +34,18 @@ export class WelcomPage implements OnInit {
                 Validators.required,
                 Validators.pattern("^((?!-)[A-Za-z0-9-]{1,63}(?<!-)\\.)+[A-Za-z]{2,6}$")]]
         });
+    }
+
+    private async loadCurrencies() {
+        this.supportedCurrencies = this.appServices.getCurrencies();
+    }
+
+    private async loadSupportedRegistrars() {
+        try {
+            let response = await this.appServices.getRegistrars();
+            this.supportedRegistrars = response.data;
+        } finally {
+        }
     }
 
     public get f() {
@@ -43,6 +59,8 @@ export class WelcomPage implements OnInit {
     }
 
     public async onSubmit() {
+        this.domainStatus = '';
+
         if (this.domainLookupForm.invalid) {
             return;
         }
@@ -52,6 +70,8 @@ export class WelcomPage implements OnInit {
         // TODO:
         try {
             let response = await this.appServices.getIsDomainAvailable(this.f.domainNameWithTLD.value);
+            this.domainStatus = response.data ? 'Available' : 'NotAvailable';
+            
             // - Pull & get domain price for each registrars
         } finally {
             this.isBusy = false;

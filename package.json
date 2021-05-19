@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "description": "SPA for Lookup",
     "scripts": {
-        "serve": "ng serve",
+        "start": "ng serve",
         "build": "ng build"
     },
     "author": "Indrajeet Valera",
