@@ -1,0 +1,34 @@
+<div class="mb-5">
+    <intro-section></intro-section>
+
+    <div class="container">
+        <form [formGroup]="domainLookupForm" (ngSubmit)="onSubmit()" class="mt-5">
+            <fieldset [disabled]="isBusy">
+                <div class="input-group input-group-lg shadow-sm">
+                    <span class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                        {{ f.selectedCurrencyCode.value }}
+                    </span>
+                    <ul class="dropdown-menu">
+                        <li *ngFor="let currency of supportedCurrencies">
+                            <a href="#" class="dropdown-item" (click)="currencyChanged(currency.code)" >{{ currency.code }} - {{ currency.name }}</a>
+                        </li>
+                    </ul>
+
+                    <input type="text" formControlName="domainNameWithTLD" id="domainNameWithTLD"
+                        class="form-control" [ngClass]="{ 'is-invalid': f.domainNameWithTLD.touched && f.domainNameWithTLD.errors }"
+                        placeholder="Enter domain you would like to buy" autofocus />
+
+                    <button type="submit" [disabled]="domainLookupForm.invalid" class="btn btn-primary">
+                        <span *ngIf="isBusy" class="spinner-border spinner-border-sm mr-1"></span>
+                        <i class="bi bi-search"></i>
+                    </button>
+                </div>
+
+                <div *ngIf="f.domainNameWithTLD.touched && f.domainNameWithTLD.errors" class="text-danger text-center">
+                    <div *ngIf="f.domainNameWithTLD.errors.required">Domain name is required</div>
+                    <div *ngIf="f.domainNameWithTLD.errors.pattern">Not a valid Domain name and should contain extension</div>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+</div>

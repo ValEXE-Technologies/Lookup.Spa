@@ -1,0 +1,34 @@
+@import "../node_modules/bootstrap/scss/functions";
+@import "../node_modules/bootstrap/scss/variables";
+
+$enable-shadows: true;
+$enable-gradients: true;
+
+$theme-colors: (
+  "primary":    $indigo,
+  "secondary":  $secondary,
+  "success":    $success,
+  "info":       $info,
+  "warning":    $warning,
+  "danger":     $danger,
+  "light":      $light,
+  "dark":       $dark
+);
+
+@import "../node_modules/bootstrap/scss/bootstrap.scss";
+@import "../node_modules/bootstrap-icons/font/bootstrap-icons.css";
+
+html,
+body {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+}
+
+.navbar {
+    &.sticky-top {
+        box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.25);
+    }
+}
