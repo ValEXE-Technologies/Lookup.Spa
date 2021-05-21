@@ -1,6 +1,5 @@
 import { Component, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
-import { first } from 'rxjs/operators';
 
 import {
     AppService,
@@ -22,12 +21,11 @@ export class WelcomPage implements OnInit {
         private readonly formBuilder: FormBuilder,
         private readonly appServices: AppService
     ) {
+        this.loadCurrencies();
+        this.loadSupportedRegistrars();
     }
 
     async ngOnInit() {
-        await this.loadCurrencies();
-        await this.loadSupportedRegistrars();
-
         this.domainLookupForm = this.formBuilder.group({
             selectedCurrencyCode: [this.supportedCurrencies[0].code, [Validators.required]],
             domainNameWithTLD: [null, [
