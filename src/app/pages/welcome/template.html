@@ -32,23 +32,46 @@
         </form>
 
         <div *ngIf="domainStatus === 'NotAvailable'"
-            class="alert alert-warning text-center mt-3 d-flex justify-content-center">
-            <i class="bi bi-exclamation-diamond-fill"></i>&nbsp;Domain "{{ f.domainNameWithTLD.value }}" is&nbsp;<strong>not</strong>&nbsp;available!
+            class="alert alert-warning text-center mt-3">
+            <strong>{{ f.domainNameWithTLD.value }}</strong>&nbsp;domain is&nbsp;<strong>not</strong>&nbsp;available!
         </div>
         
         <div *ngIf="domainStatus === 'Available'" class="mt-3">
             <div *ngIf="isBusy"
-                class="alert alert-info text-center mt-3 d-flex justify-content-center">
-                <i class="bi bi-patch-check-fill"></i>&nbsp;Domain "{{ f.domainNameWithTLD.value }}" is available, loading the prices...!
+                class="alert alert-info text-center mt-3">
+                <strong>{{ f.domainNameWithTLD.value }}</strong>&nbsp;domain is available, loading registrars...
             </div>
     
-            <table class="table table-hover table-striped">
-                <tbody>
-                    <tr *ngFor="let registrar of supportedRegistrars">
-                        <th scope="row">{{ registrar.name }}</th>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="list-group">
+                <a *ngFor="let registrar of registrars"
+                    [href]="registrar.url" target="blank"
+                    class="list-group-item list-group-item-action px-3 d-flex justify-content-between align-items-center">
+                    {{ registrar.name }}
+
+                    <div *ngIf="registrar.status == 'Loading'" class="spinner-grow spinner-grow-sm" role="status">
+                        <span class="visually-hidden">Loading Domain Price...</span>
+                    </div>
+
+                    <div *ngIf="registrar.status == 'Ready'">
+                        {{ f.selectedCurrencyCode.value }} {{ registrar.price.toFixed(2) }}
+
+                        <button type="button" class="btn btn-link link-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"></button>
+                        <ul class="dropdown-menu dropdown-menu-lg-end">
+                            <li>
+                                <span class="dropdown-item disabled fw-bolder">Features</span>
+                            </li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li *ngFor="let feature of registrar.features">
+                                <span class="dropdown-item disabled">{{ feature }}</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <span **ngIf="registrar.status == 'Error'" class="text-denger">-</span>
+                </a>
+            </div>
         </div>
     </div>
 </div>

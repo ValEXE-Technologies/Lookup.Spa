@@ -14,3 +14,10 @@ export type Registrar = {
     name: string;
     baseUrl: string;
 }
+
+export type DomainPrice = {
+    domainNameWithTLD: string;
+    url: string;
+    currency: string;
+    price: number;
+}

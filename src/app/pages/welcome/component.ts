@@ -3,9 +3,16 @@ import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 
 import {
     AppService,
-    CurrencyResponse,
-    Registrar
+    CurrencyResponse
 } from "@app/services";
+
+export type RegistrarModel = {
+    name: string;
+    status: "Loading" | "Ready" | "Error";
+    price: number;
+    url: string;
+    features: string[];
+}
 
 @Component({
     templateUrl: "./template.html"
@@ -13,7 +20,7 @@ import {
 export class WelcomPage implements OnInit {
     public domainLookupForm: FormGroup;
     public supportedCurrencies: CurrencyResponse[] = null;
-    public supportedRegistrars: Registrar[] = null;
+    public registrars: RegistrarModel[] = [];
     public domainStatus: '' | 'Available' | 'NotAvailable' = '';
     public isBusy: boolean = false;
 
@@ -22,7 +29,6 @@ export class WelcomPage implements OnInit {
         private readonly appServices: AppService
     ) {
         this.loadCurrencies();
-        this.loadSupportedRegistrars();
     }
 
     async ngOnInit() {
@@ -38,12 +44,42 @@ export class WelcomPage implements OnInit {
         this.supportedCurrencies = this.appServices.getCurrencies();
     }
 
-    private async loadSupportedRegistrars() {
+    private async loadRegistrars() {
+        let response = await this.appServices.getRegistrars();
+        
+        response.data.forEach( async (d) => {
+            let registrar: RegistrarModel = {
+                name: d.name,
+                status: 'Loading',
+                price: 0,
+                url: d.baseUrl,
+                features: []
+            };
+
+            this.registrars.push(registrar);
+
+            this.loadDomainPrice(registrar);
+        });
+    }
+
+    private async loadDomainPrice(
+        registrar: RegistrarModel
+    ) {
         try {
-            let response = await this.appServices.getRegistrars();
-            this.supportedRegistrars = response.data;
-        } finally {
+            let response = await this.appServices.getDomainPrice(
+                this.domainLookupForm.controls['selectedCurrencyCode'].value,
+                registrar.name,
+                this.domainLookupForm.controls['domainNameWithTLD'].value);
+            
+            registrar.price = response.data.price;
+            registrar.url = response.data.url;
+            registrar.status = 'Ready';
+        } catch (err) {
+            registrar.status = 'Error';
         }
+
+        let registrarIndex = this.registrars.indexOf(registrar);
+        this.registrars[registrarIndex] = registrar;
     }
 
     public get f() {
@@ -65,12 +101,16 @@ export class WelcomPage implements OnInit {
 
         this.isBusy = true;
 
-        // TODO:
         try {
             let response = await this.appServices.getIsDomainAvailable(this.f.domainNameWithTLD.value);
-            this.domainStatus = response.data ? 'Available' : 'NotAvailable';
-            
-            // - Pull & get domain price for each registrars
+
+            if (response.data) {
+                this.domainStatus = 'Available';
+                
+                this.loadRegistrars();
+            } else {
+                this.domainStatus = 'NotAvailable';
+            }
         } finally {
             this.isBusy = false;
         }
