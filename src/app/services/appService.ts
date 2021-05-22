@@ -4,7 +4,7 @@ import { environment } from '@environments/environment';
 
 import {
     ResponseViewModel,
-    CurrencyResponse,
+    Currency,
     Registrar,
     DomainPrice
 } from "./models";
@@ -18,12 +18,8 @@ export class AppService {
     ) {
     }
 
-    private readonly supportedCurrencies: CurrencyResponse[] = [
-        { code: "USD", symbol: "$", name: "United States Dollars" }
-    ]
-
-    public getCurrencies(): CurrencyResponse[] {
-        return this.supportedCurrencies;
+    public async getCurrencies(): Promise<ResponseViewModel<Currency[]>> {
+        return this.httpClient.get<ResponseViewModel<Currency[]>>(`${environment.apiUrl}/api/referencedata/currencies`).toPromise();
     }
 
     public async getRegistrars(): Promise<ResponseViewModel<Registrar[]>> {

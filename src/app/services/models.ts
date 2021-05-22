@@ -4,7 +4,7 @@ export type ResponseViewModel<TModel> = {
     data: TModel;
 }
 
-export type CurrencyResponse = {
+export type Currency = {
     code: string;
     symbol: string;
     name: string;
@@ -13,11 +13,10 @@ export type CurrencyResponse = {
 export type Registrar = {
     name: string;
     baseUrl: string;
+    features: string[];
 }
 
 export type DomainPrice = {
-    domainNameWithTLD: string;
     url: string;
-    currency: string;
     price: number;
 }

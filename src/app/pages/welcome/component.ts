@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 
 import {
     AppService,
-    CurrencyResponse
+    Currency
 } from "@app/services";
 
 export type RegistrarModel = {
@@ -19,7 +19,7 @@ export type RegistrarModel = {
 })
 export class WelcomPage implements OnInit {
     public domainLookupForm: FormGroup;
-    public supportedCurrencies: CurrencyResponse[] = null;
+    public supportedCurrencies: Currency[] = null;
     public registrars: RegistrarModel[] = [];
     public domainStatus: '' | 'Available' | 'NotAvailable' = '';
     public isBusy: boolean = false;
@@ -28,10 +28,11 @@ export class WelcomPage implements OnInit {
         private readonly formBuilder: FormBuilder,
         private readonly appServices: AppService
     ) {
-        this.loadCurrencies();
     }
 
     async ngOnInit() {
+        await this.loadCurrencies();
+        
         this.domainLookupForm = this.formBuilder.group({
             selectedCurrencyCode: [this.supportedCurrencies[0].code, [Validators.required]],
             domainNameWithTLD: [null, [
@@ -41,10 +42,19 @@ export class WelcomPage implements OnInit {
     }
 
     private async loadCurrencies() {
-        this.supportedCurrencies = this.appServices.getCurrencies();
+        this.isBusy = true;
+
+        try {
+            let response = await this.appServices.getCurrencies();
+            this.supportedCurrencies = response.data;
+        } finally {
+            this.isBusy = false;
+        }
     }
 
     private async loadRegistrars() {
+        this.registrars = [];
+
         let response = await this.appServices.getRegistrars();
         
         response.data.forEach( async (d) => {
@@ -53,7 +63,7 @@ export class WelcomPage implements OnInit {
                 status: 'Loading',
                 price: 0,
                 url: d.baseUrl,
-                features: []
+                features: d.features
             };
 
             this.registrars.push(registrar);
@@ -70,10 +80,13 @@ export class WelcomPage implements OnInit {
                 this.domainLookupForm.controls['selectedCurrencyCode'].value,
                 registrar.name,
                 this.domainLookupForm.controls['domainNameWithTLD'].value);
-            
-            registrar.price = response.data.price;
-            registrar.url = response.data.url;
-            registrar.status = 'Ready';
+            if (null == response.data) {
+                registrar.status = 'Error';
+            } else {
+                registrar.price = response.data.price;
+                registrar.url = response.data.url;
+                registrar.status = 'Ready';
+            }
         } catch (err) {
             registrar.status = 'Error';
         }
