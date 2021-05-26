@@ -22,8 +22,10 @@ export class AppService {
         return this.httpClient.get<ResponseViewModel<Currency[]>>(`${environment.apiUrl}/api/referencedata/currencies`).toPromise();
     }
 
-    public async getRegistrars(): Promise<ResponseViewModel<Registrar[]>> {
-        return this.httpClient.get<ResponseViewModel<Registrar[]>>(`${environment.apiUrl}/api/domain/registrars`).toPromise();
+    public async getRegistrars(
+        currencyCode: string
+    ): Promise<ResponseViewModel<Registrar[]>> {
+        return this.httpClient.get<ResponseViewModel<Registrar[]>>(`${environment.apiUrl}/api/domain/${currencyCode}/registrars`).toPromise();
     }
 
     public async getIsDomainAvailable(
@@ -37,6 +39,6 @@ export class AppService {
         registrar: string,
         domainNameWithTLD: string
     ): Promise<ResponseViewModel<DomainPrice>> {
-        return this.httpClient.get<ResponseViewModel<DomainPrice>>(`${environment.apiUrl}/api/domain/price/${currency}/${registrar}/${domainNameWithTLD}`).toPromise();
+        return this.httpClient.get<ResponseViewModel<DomainPrice>>(`${environment.apiUrl}/api/domain/${currency}/${registrar}/${domainNameWithTLD}/price`).toPromise();
     }
 }

@@ -55,7 +55,9 @@ export class WelcomPage implements OnInit {
     private async loadRegistrars() {
         this.registrars = [];
 
-        let response = await this.appServices.getRegistrars();
+        let response = await this.appServices.getRegistrars(
+            this.domainLookupForm.controls['selectedCurrencyCode'].value
+        );
         
         response.data.forEach( async (d) => {
             let registrar: RegistrarModel = {
