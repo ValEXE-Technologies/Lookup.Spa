@@ -1,7 +1,7 @@
 <div class="mb-5">
     <intro-section></intro-section>
 
-    <div class="container">
+    <div *ngIf="domainLookupForm" class="container">
         <form [formGroup]="domainLookupForm" (ngSubmit)="onSubmit()" class="mt-5">
             <fieldset [disabled]="isBusy">
                 <div class="input-group input-group-lg shadow-sm">

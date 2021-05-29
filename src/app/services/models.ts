@@ -1,5 +1,5 @@
 export type ResponseViewModel<TModel> = {
-    status: string;
+    status: 'Successful' | 'Failed';
     message: string;
     data: TModel;
 }
