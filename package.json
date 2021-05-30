@@ -2,6 +2,10 @@
     "name": "lookup.spa",
     "version": "1.0.0",
     "description": "SPA for Lookup",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/ValEXE-Technologies/Lookup.Spa"
+    },
     "scripts": {
         "start": "ng serve",
         "build": "ng build"
