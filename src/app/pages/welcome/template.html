@@ -41,7 +41,19 @@
                 class="alert alert-info text-center mt-3">
                 <strong>{{ f.domainNameWithTLD.value }}</strong>&nbsp;domain is available, loading registrars...
             </div>
-    
+
+            <div class="d-flex justify-content-end mb-3">
+                <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                    Sorted by {{ sortBy }}
+                </button>
+                <ul class="dropdown-menu dropdown-menu-lg-end">
+                    <li><a href="#" class="dropdown-item" (click)="sortByChanged('Price - Lower to Higher')">Price - Lower to Higher</a></li>
+                    <li><a href="#" class="dropdown-item" (click)="sortByChanged('Price - Higher to Lower')">Price - Higher to Lower</a></li>
+                    <li><a href="#" class="dropdown-item" (click)="sortByChanged('Registrar A-Z')">Registrar A-Z</a></li>
+                    <li><a href="#" class="dropdown-item" (click)="sortByChanged('Registrar Z-A')">Registrar Z-A</a></li>
+                </ul>
+            </div>
+
             <div class="list-group">
                 <a *ngFor="let registrar of registrars"
                     [href]="registrar.url" target="blank"

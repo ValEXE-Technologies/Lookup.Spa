@@ -22,6 +22,7 @@ export class WelcomPage implements OnInit {
     public supportedCurrencies: Currency[] = null;
     public registrars: RegistrarModel[] = [];
     public domainStatus: '' | 'Available' | 'NotAvailable' = '';
+    public sortBy: 'Price - Lower to Higher' | 'Price - Higher to Lower' | 'Registrar A-Z' | 'Registrar Z-A' = 'Price - Lower to Higher';
     public isBusy: boolean = false;
 
     constructor(
@@ -89,6 +90,8 @@ export class WelcomPage implements OnInit {
                 registrar.url = response.data.url;
                 registrar.status = 'Ready';
             }
+
+            this.sortResult();
         } catch (err) {
             registrar.status = 'Error';
         }
@@ -105,6 +108,62 @@ export class WelcomPage implements OnInit {
         newCurrencyCode: string
     ): void {
         this.f.selectedCurrencyCode.setValue(newCurrencyCode);
+    }
+
+    public sortByChanged(
+        newSortBy: 'Price - Lower to Higher' | 'Price - Higher to Lower' | 'Registrar A-Z' | 'Registrar Z-A'
+    ): void {
+        this.sortBy = newSortBy;
+        this.sortResult();
+    }
+
+    private async sortResult() {
+        switch (this.sortBy) {
+            case 'Price - Lower to Higher':
+                this.registrars.sort((one, two) => {
+                    if (one.status == 'Ready' && two.status == 'Ready') {
+                        return one.price - two.price;
+                    }
+
+                    return -1;
+                });
+                break;
+            case 'Price - Higher to Lower':
+                this.registrars.sort((one, two) => {
+                    if (one.status == 'Ready' && two.status == 'Ready') {
+                        return two.price - one.price;
+                    }
+
+                    return -1;
+                });
+                break;
+            case 'Registrar A-Z':
+                this.registrars.sort((one, two) => {
+                    if (one.name.toLocaleLowerCase() > two.name.toLocaleLowerCase()) {
+                        return 1;
+                    }
+
+                    if (one.name.toLocaleLowerCase() < two.name.toLocaleLowerCase()) {
+                        return -1;
+                    }
+
+                    return 0;
+                })
+                break;
+            case 'Registrar Z-A':
+                this.registrars.sort((one, two) => {
+                    if (one.name.toLocaleLowerCase() < two.name.toLocaleLowerCase()) {
+                        return 1;
+                    }
+
+                    if (one.name.toLocaleLowerCase() > two.name.toLocaleLowerCase()) {
+                        return -1;
+                    }
+
+                    return 0;
+                })
+                break;
+        }
     }
 
     public async onSubmit() {
