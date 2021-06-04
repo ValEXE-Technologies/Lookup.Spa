@@ -6,7 +6,7 @@
             <fieldset [disabled]="isBusy">
                 <div class="input-group input-group-lg shadow-sm">
                     <span class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                        {{ f.selectedCurrencyCode.value }}
+                        {{ selectedCurrency.code }} ({{ selectedCurrency.symbol }})
                     </span>
                     <ul class="dropdown-menu">
                         <li *ngFor="let currency of supportedCurrencies">
@@ -43,7 +43,7 @@
             </div>
 
             <div class="d-flex justify-content-end mb-3">
-                <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                <button type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                     Sorted by {{ sortBy }}
                 </button>
                 <ul class="dropdown-menu dropdown-menu-lg-end">
@@ -65,7 +65,7 @@
                     </div>
 
                     <div *ngIf="registrar.status == 'Ready'">
-                        {{ f.selectedCurrencyCode.value }} {{ registrar.price.toFixed(2) }}
+                        {{ registrar.price.toFixed(2) | currency:selectedCurrency.code }}
 
                         <button type="button" class="btn btn-sm btn-link link-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"></button>
                         <ul class="dropdown-menu dropdown-menu-lg-end">

@@ -20,6 +20,7 @@ export type RegistrarModel = {
 export class WelcomPage implements OnInit {
     public domainLookupForm: FormGroup;
     public supportedCurrencies: Currency[] = null;
+    public selectedCurrency: Currency = null;
     public registrars: RegistrarModel[] = [];
     public domainStatus: '' | 'Available' | 'NotAvailable' = '';
     public sortBy: 'Price - Lower to Higher' | 'Price - Higher to Lower' | 'Registrar A-Z' | 'Registrar Z-A' = 'Price - Lower to Higher';
@@ -35,7 +36,7 @@ export class WelcomPage implements OnInit {
         await this.loadCurrencies();
         
         this.domainLookupForm = this.formBuilder.group({
-            selectedCurrencyCode: [this.supportedCurrencies[0].code, [Validators.required]],
+            selectedCurrencyCode: [this.selectedCurrency.code, [Validators.required]],
             domainNameWithTLD: [null, [
                 Validators.required,
                 Validators.pattern("^((?!-)[A-Za-z0-9-]{1,63}(?<!-)\\.)+[A-Za-z]{2,6}$")]]
@@ -48,6 +49,7 @@ export class WelcomPage implements OnInit {
         try {
             let response = await this.appServices.getCurrencies();
             this.supportedCurrencies = response.data;
+            this.selectedCurrency = this.supportedCurrencies[0];
         } finally {
             this.isBusy = false;
         }
@@ -57,7 +59,7 @@ export class WelcomPage implements OnInit {
         this.registrars = [];
 
         let response = await this.appServices.getRegistrars(
-            this.domainLookupForm.controls['selectedCurrencyCode'].value
+            this.selectedCurrency.code
         );
         
         response.data.forEach( async (d) => {
@@ -80,7 +82,7 @@ export class WelcomPage implements OnInit {
     ) {
         try {
             let response = await this.appServices.getDomainPrice(
-                this.domainLookupForm.controls['selectedCurrencyCode'].value,
+                this.selectedCurrency.code,
                 registrar.name,
                 this.domainLookupForm.controls['domainNameWithTLD'].value);
             if (null == response.data) {
@@ -107,7 +109,11 @@ export class WelcomPage implements OnInit {
     public currencyChanged(
         newCurrencyCode: string
     ): void {
-        this.f.selectedCurrencyCode.setValue(newCurrencyCode);
+        this.selectedCurrency = this.supportedCurrencies
+            .find((value) => value.code === newCurrencyCode);
+        this.f.selectedCurrencyCode.setValue(this.selectedCurrency.code);
+        this.registrars = [];
+        this.domainStatus = '';
     }
 
     public sortByChanged(
