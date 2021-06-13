@@ -85,7 +85,7 @@ export class WelcomPage implements OnInit {
                 this.selectedCurrency.code,
                 registrar.name,
                 this.domainLookupForm.controls['domainNameWithTLD'].value);
-            if (null == response.data) {
+            if ('Failed' === response.status) {
                 registrar.status = 'Error';
             } else {
                 registrar.price = response.data.price;
