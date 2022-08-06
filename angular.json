@@ -78,5 +78,8 @@
             }
         }
     },
-    "defaultProject": "Lookup.Spa"
+    "defaultProject": "Lookup.Spa",
+    "cli": {
+      "analytics": false
+    }
 }
